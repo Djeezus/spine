@@ -1,7 +1,7 @@
 /*
  ex: set tabstop=4 shiftwidth=4 autoindent:
  +-------------------------------------------------------------------------+
- | Copyright (C) 2002-2015 The Cacti Group                                 |
+ | Copyright (C) 2002-2014 The Cacti Group                                 |
  |                                                                         |
  | This program is free software; you can redistribute it and/or           |
  | modify it under the terms of the GNU Lesser General Public              |
@@ -726,8 +726,9 @@ int ping_tcp(host_t *host, ping_t *ping) {
 				/* caculate total time */
 				total_time = (end_time - begin_time) * one_thousand;
 
-				if (((return_code == -1) && (errno == ECONNREFUSED)) ||
-					(return_code == 0)) {
+				/* - gert - Connection refused means, don't poll me goddamned, wtf ?!
+				if (((return_code == -1) && (errno == ECONNREFUSED)) || */
+				if	(return_code == 0) {
 					SPINE_LOG_DEBUG(("Host[%i] DEBUG: TCP Host Alive, Try Count:%i, Time:%.4f ms", host->id, retry_count+1, (total_time)));
 					snprintf(ping->ping_response, SMALL_BUFSIZE, "TCP: Host is Alive");
 					snprintf(ping->ping_status, 50, "%.5f", total_time);
@@ -937,7 +938,11 @@ char *remove_tcp_udp_from_hostname(char *hostname) {
 		strcpy(cleaned_hostname, hostname);
 	}
 
-	return(cleaned_hostname);
+    /*  - gert - remove @ and : characters ... */
+    SPINE_LOG_DEBUG(("cleaned hostname : %s",cleaned_hostname));
+    char *sane_hostname = sane(cleaned_hostname);
+    SPINE_LOG_DEBUG(("sanitized hostname : %s",sane_hostname));
+    return(sane_hostname);
 }
 
 /*! \fn unsigned short int get_checksum(void* buf, int len)

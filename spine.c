@@ -880,6 +880,8 @@ static void display_help(void) {
 	};
 
 	printf("SPINE %s  Copyright 2002-2015 by The Cacti Group\n\n", VERSION);
+	printf("-- Patched by Gert for fancy device name support :)--\n");
+
 
 	for (p = helptext; *p; p++) {
 		puts(*p);	/* automatically adds a newline */

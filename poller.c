@@ -34,6 +34,44 @@
 #include "common.h"
 #include "spine.h"
 
+/* gert sanitize */
+char *sane(char *hostname) {
+
+  int null ;
+  char *hostptr ;
+  if (!(hostptr = (char *) malloc(strlen(hostname)+1))) {
+       die("ERROR: Fatal malloc error: poller.c sane()") ;
+	      }
+  /* Search for [@|:] in input string */
+  char *atp = strrchr(hostname, '@' ) ;
+  char *cop = strrchr(hostname, ':' ) ;
+  /* If @&&: found: */
+  if((atp)&&(cop)) {
+   null =  strlen(atp)-strlen(cop) ;
+   memcpy(hostptr,atp+1,null) ;
+  }
+  /* if only @ */
+  if((atp)&&(!cop)) {
+   null = strlen(atp) ;
+   memcpy(hostptr,atp+1,null) ;
+  }
+  /* if only : */
+  if((!atp)&&(cop)) {
+   null = strlen(hostname)-strlen(cop)+1 ;
+   memcpy(hostptr,hostname,null) ;
+  }
+  /* if !@: */
+  if((!atp)&&(!cop)) {
+   null = strlen(hostname)+1 ;
+   memcpy(hostptr,hostname,null);
+  }
+
+  /* NUL termination */
+  hostptr[null-1]='\0' ;
+  return(hostptr);
+  free(hostptr);
+}
+
 /*! \fn void *child(void *arg)
  *  \brief function is called via the fork command and initiates a poll of a host
  *  \param arg a pointer to an integer point to the host_id to be polled
@@ -480,7 +518,8 @@ void poll_host(int host_id, int host_thread, int last_host_thread, int host_data
 					(strlen(host->snmp_community) > 0)) ||
 					(host->snmp_version == 3)) {
 					host->snmp_session = snmp_host_init(host->id,
-						host->hostname,
+						/* gert : sanetize hostname*/
+						sane(host->hostname),
 						host->snmp_version,
 						host->snmp_community,
 						host->snmp_username,
@@ -903,7 +942,8 @@ void poll_host(int host_id, int host_thread, int last_host_thread, int host_data
 					STRNCOPY(last_snmp_priv_protocol,   poller_items[i].snmp_priv_protocol);
 					STRNCOPY(last_snmp_context,         poller_items[i].snmp_context);
 
-					host->snmp_session = snmp_host_init(host->id, poller_items[i].hostname,
+					/* - gert - sanitize the poller items too */
+					host->snmp_session = snmp_host_init(host->id, sane(poller_items[i].hostname),
 						poller_items[i].snmp_version, poller_items[i].snmp_community,
 						poller_items[i].snmp_username, poller_items[i].snmp_password,
 						poller_items[i].snmp_auth_protocol, poller_items[i].snmp_priv_passphrase,
