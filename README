@@ -8,9 +8,15 @@ This adds to the already extensive features of cacti/spine, in a sense that it a
 ssh_scripts to get info from hosts.  In stead of having to tinker with data_input/query templates, we can now
 add login+port info directly in the device name.
 
+You can still use regular device hostnames, with or without port and/or username ... the patches just strip these if they are there,
+so that snmp polling still works...
+
 2. to have the availability/reachability of device actually check the service
    although ECONNREFUSED strictly does mean the host is reachable, in case of a TCP_port ping, I only care about the
    service which is running.  If there is no service running, it makes no sense to poll the device ... 
+
+If you want to use this spine, and want to benifit of both features, also get the cacti from my github, whish is also patched 
+for this purpose.
 
 
 For the rest it's just awesome spine :)
