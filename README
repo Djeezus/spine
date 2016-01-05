@@ -21,6 +21,11 @@ for this purpose.
 
 For the rest it's just awesome spine :)
 
+Files patched :
+ping.c
+poller.c
+poller.h
+
 - Gert -
 
 ------------------------------------------
