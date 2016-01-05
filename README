@@ -1,3 +1,22 @@
+I decided to patch spine & cacti basically for 2 reasons :
+
+1. to allow for device-names in the form of :
+
+   usernames@hostname:port
+
+This adds to the already extensive features of cacti/spine, in a sense that it allows for transparent usage of
+ssh_scripts to get info from hosts.  In stead of having to tinker with data_input/query templates, we can now
+add login+port info directly in the device name.
+
+2. to have the availability/reachability of device actually check the service
+   although ECONNREFUSED strictly does mean the host is reachable, in case of a TCP_port ping, I only care about the
+   service which is running.  If there is no service running, it makes no sense to poll the device ... 
+
+
+For the rest it's just awesome spine :)
+
+- Gert -
+
 ------------------------------------------
 spine: a backend poller for Cacti
 ------------------------------------------
